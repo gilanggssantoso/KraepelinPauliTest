@@ -1,0 +1,10 @@
+{
+  "description": "Conduct timed mental addition tests with 10 sets of 50 problems each, tracking performance stability through detailed completion graphs for cognitive assessment.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
