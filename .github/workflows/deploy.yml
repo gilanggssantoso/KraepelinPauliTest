@@ -1,39 +1,35 @@
 name: Deploy Vite App to GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main", "master"]
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Removed the cache requirement here
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
+      # Updated to a standard npm install
       - name: Install dependencies
-        run: npm ci || npm install
+        run: npm install
 
       - name: Build project
         run: npm run build
@@ -41,10 +37,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Vite outputs the built files into the "dist" directory by default
           path: './dist'
 
-  # Deployment job
   deploy:
     environment:
       name: github-pages
