@@ -10,12 +10,12 @@ import {
 } from "recharts"
 import { Activity, Clock, Play, RefreshCcw } from "lucide-react"
 
-const TOTAL_MINUTES = 3
-const TOTAL_TIME = TOTAL_MINUTES * 60 // 3 minutes in seconds
+const DURATIONS = [3, 5, 10, 15, 20, 30]
 
 export default function App() {
+  const [testDuration, setTestDuration] = useState(10)
   const [status, setStatus] = useState<"idle" | "running" | "completed">("idle")
-  const [timeLeft, setTimeLeft] = useState(TOTAL_TIME)
+  const [timeLeft, setTimeLeft] = useState(10 * 60)
 
   // Ref for time left to ensure the keyboard handler uses the latest value without remounting
   const timeLeftRef = useRef(timeLeft)
@@ -24,7 +24,7 @@ export default function App() {
   }, [timeLeft])
 
   // Track correct answers per minute interval.
-  const [scores, setScores] = useState<number[]>(Array(TOTAL_MINUTES).fill(0))
+  const [scores, setScores] = useState<number[]>([])
 
   // Current pair of numbers to add
   const [num1, setNum1] = useState(0)
@@ -37,8 +37,8 @@ export default function App() {
 
   const startGame = () => {
     setStatus("running")
-    setTimeLeft(TOTAL_TIME)
-    setScores(Array(TOTAL_MINUTES).fill(0))
+    setTimeLeft(testDuration * 60)
+    setScores(Array(testDuration).fill(0))
     generateNumbers()
   }
 
@@ -87,9 +87,9 @@ export default function App() {
         // timeLeft = 120..61 -> index 1
         // timeLeft = 60..1 -> index 2
         const minuteIndex =
-          TOTAL_MINUTES - 1 - Math.floor((timeLeftRef.current - 1) / 60)
+          testDuration - 1 - Math.floor((timeLeftRef.current - 1) / 60)
 
-        if (minuteIndex >= 0 && minuteIndex < TOTAL_MINUTES) {
+        if (minuteIndex >= 0 && minuteIndex < testDuration) {
           newScores[minuteIndex] += 1
         }
         return newScores
@@ -126,7 +126,7 @@ export default function App() {
         {status === "idle" && (
           <div className="text-center max-w-md space-y-6">
             <p className="text-slate-600 leading-relaxed">
-              Tes ini berlangsung selama 3 menit tanpa henti. Selesaikan
+              Tes ini berlangsung selama {testDuration} menit tanpa henti. Selesaikan
               penjumlahan sederhana sebanyak mungkin.
             </p>
             <div className="bg-slate-100 p-4 rounded-xl text-left text-sm space-y-3">
@@ -139,6 +139,24 @@ export default function App() {
                 Contoh: Jika Anda melihat 8 dan 7, jumlahnya adalah 15. Anda
                 harus memasukkan angka <strong>5</strong>.
               </p>
+            </div>
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-slate-700">Pilih Durasi Tes</label>
+              <div className="flex flex-wrap justify-center gap-3">
+                {DURATIONS.map((duration) => (
+                  <button
+                    key={duration}
+                    onClick={() => setTestDuration(duration)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                      testDuration === duration
+                        ? "bg-indigo-50 border-indigo-200 text-indigo-700"
+                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    {duration} Menit
+                  </button>
+                ))}
+              </div>
             </div>
             <button
               onClick={startGame}
@@ -158,13 +176,11 @@ export default function App() {
                   Jawaban Benar (Menit ini)
                 </p>
                 <p className="text-2xl font-semibold text-indigo-600">
-                  {
-                    scores[
-                      TOTAL_MINUTES -
-                        1 -
-                        Math.floor((Math.max(1, timeLeft) - 1) / 60)
-                    ]
-                  }
+                  {scores[
+                    testDuration -
+                      1 -
+                      Math.floor((Math.max(1, timeLeft) - 1) / 60)
+                  ] ?? 0}
                 </p>
               </div>
               <div className="text-right space-y-1">
@@ -221,7 +237,7 @@ export default function App() {
             <div className="text-center space-y-2">
               <h2 className="text-3xl font-bold tracking-tight">Tes Selesai</h2>
               <p className="text-slate-600">
-                Berikut adalah stabilitas performa Anda selama 3 menit.
+                Berikut adalah stabilitas performa Anda selama {testDuration} menit.
               </p>
             </div>
 
