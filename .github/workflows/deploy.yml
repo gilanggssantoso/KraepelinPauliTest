@@ -21,15 +21,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Removed the cache requirement here
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # Updated to a standard npm install
+      # Added the legacy-peer-deps flag to bypass the npm bug
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build project
         run: npm run build
