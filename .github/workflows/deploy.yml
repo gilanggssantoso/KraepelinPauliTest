@@ -26,9 +26,11 @@ jobs:
         with:
           node-version: 20
 
-      # Added the legacy-peer-deps flag to bypass the npm bug
+      # Added an extra line to explicitly install the missing react-is package
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: |
+          npm install --legacy-peer-deps
+          npm install react-is
 
       - name: Build project
         run: npm run build
